@@ -1,0 +1,2 @@
+# Placeholder lockfile for local validation in environments where `uv` is unavailable.
+# Regenerate with `uv lock` in a fully provisioned setup.

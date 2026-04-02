@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenEnv Email Triage Studio</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="page-glow page-glow-one"></div>
+    <div class="page-glow page-glow-two"></div>
+    <div class="grain"></div>
+
+    <div class="shell">
+      <header class="masthead">
+        <div class="brand-lockup">
+          <p class="eyebrow">OpenEnv Workspace</p>
+          <h1>Email Triage Studio</h1>
+          <p class="lede">
+            A cinematic inbox interface for classification, drafting, delegation,
+            and scheduling across every difficulty mode.
+          </p>
+        </div>
+
+        <div class="masthead-actions">
+          <label class="task-picker">
+            <span>Scenario</span>
+            <select id="task-select"></select>
+          </label>
+          <button id="new-session-btn" class="ghost-button">New Session</button>
+        </div>
+      </header>
+
+      <section class="summary-strip">
+        <div class="summary-copy">
+          <p class="summary-label">Current mission</p>
+          <h2 id="task-title">Loading scenario...</h2>
+          <p id="task-description" class="summary-description"></p>
+        </div>
+
+        <div class="summary-metrics">
+          <div class="metric">
+            <span>Score</span>
+            <strong id="metric-score">0%</strong>
+          </div>
+          <div class="metric">
+            <span>Steps</span>
+            <strong id="metric-steps">0 / 0</strong>
+          </div>
+          <div class="metric">
+            <span>Resolved</span>
+            <strong id="metric-resolved">0 / 0</strong>
+          </div>
+        </div>
+      </section>
+
+      <main class="workspace">
+        <section class="queue-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-label">Inbox queue</p>
+              <h3>Messages in play</h3>
+            </div>
+            <span id="queue-count" class="panel-meta">0 open</span>
+          </div>
+          <div id="email-list" class="email-list"></div>
+        </section>
+
+        <section class="focus-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-label">Focus view</p>
+              <h3 id="focus-subject">Select a message</h3>
+            </div>
+            <span id="focus-priority" class="priority-pill">Standby</span>
+          </div>
+
+          <div id="focus-meta" class="focus-meta"></div>
+          <article id="focus-body" class="focus-body">
+            Choose any message from the queue to inspect its body and act on it.
+          </article>
+        </section>
+
+        <aside class="action-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-label">Action studio</p>
+              <h3>Shape the next move</h3>
+            </div>
+          </div>
+
+          <div class="recommendation">
+            <div>
+              <p class="recommendation-label">Suggested move</p>
+              <p id="recommendation-text" class="recommendation-text">
+                Waiting for scenario data.
+              </p>
+            </div>
+            <div class="recommendation-actions">
+              <button id="use-suggestion-btn" class="ghost-button">
+                Use Suggestion
+              </button>
+              <button id="auto-play-btn" class="primary-button">
+                Auto-Play Demo
+              </button>
+            </div>
+          </div>
+
+          <form id="action-form" class="action-form">
+            <div class="field-group">
+              <label for="action-type">Action</label>
+              <select id="action-type" name="action_type">
+                <option value="classify">Classify</option>
+                <option value="archive">Archive</option>
+                <option value="delete">Delete</option>
+                <option value="respond">Respond</option>
+                <option value="delegate">Delegate</option>
+                <option value="snooze">Snooze</option>
+                <option value="schedule">Schedule</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="priority">Priority</label>
+              <select id="priority" name="priority">
+                <option value="">None</option>
+                <option value="urgent">Urgent</option>
+                <option value="important">Important</option>
+                <option value="low">Low</option>
+                <option value="spam">Spam</option>
+              </select>
+            </div>
+
+            <div class="field-group conditional" data-field="response_text">
+              <label for="response-text">Draft response</label>
+              <textarea
+                id="response-text"
+                name="response_text"
+                placeholder="Write the reply that should be sent."
+              ></textarea>
+            </div>
+
+            <div class="field-group conditional" data-field="delegate_to">
+              <label for="delegate-to">Delegate to</label>
+              <input
+                id="delegate-to"
+                name="delegate_to"
+                type="text"
+                placeholder="security@openenv.example"
+              />
+            </div>
+
+            <div class="field-group conditional" data-field="snooze_until">
+              <label for="snooze-until">Snooze until</label>
+              <input
+                id="snooze-until"
+                name="snooze_until"
+                type="text"
+                placeholder="2026-04-05T09:00:00+05:30"
+              />
+            </div>
+
+            <div class="field-group conditional" data-field="scheduled_time">
+              <label for="scheduled-time">Scheduled slot</label>
+              <input
+                id="scheduled-time"
+                name="scheduled_time"
+                type="text"
+                placeholder="Thursday 3:00 PM IST"
+              />
+            </div>
+
+            <div class="field-group">
+              <label for="rationale">Rationale</label>
+              <input
+                id="rationale"
+                name="rationale"
+                type="text"
+                placeholder="Optional note for why this action fits."
+              />
+            </div>
+
+            <button id="submit-action-btn" type="submit" class="primary-button">
+              Commit Action
+            </button>
+          </form>
+        </aside>
+      </main>
+
+      <section class="history-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-label">Action timeline</p>
+            <h3>Live execution log</h3>
+          </div>
+          <span id="history-state" class="panel-meta">Session idle</span>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </section>
+    </div>
+
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

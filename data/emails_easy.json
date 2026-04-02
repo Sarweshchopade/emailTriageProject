@@ -1,0 +1,70 @@
+{
+  "name": "easy",
+  "description": "Classify each incoming message by priority. Use one classify action per email and set priority to urgent, important, low, or spam.",
+  "max_steps": 10,
+  "grader": "easy",
+  "initial_emails": [
+    {
+      "id": "easy-1",
+      "sender": "maya.chen@company.example",
+      "subject": "Need board meeting revenue figures by 4 PM today",
+      "body": "Hi, can you send the updated revenue table before the board prep at 4 PM? This is time-sensitive.",
+      "timestamp": "2026-04-02T09:15:00+05:30"
+    },
+    {
+      "id": "easy-2",
+      "sender": "events@vendorpromos.example",
+      "subject": "Exclusive webinar + limited-time productivity bundle",
+      "body": "Register now for our sponsored offer and unsubscribe any time.",
+      "timestamp": "2026-04-02T09:22:00+05:30"
+    },
+    {
+      "id": "easy-3",
+      "sender": "design-team@company.example",
+      "subject": "Please review the homepage mockups before tomorrow's design review",
+      "body": "Could you leave comments on the pre-read before tomorrow morning's session?",
+      "timestamp": "2026-04-02T10:05:00+05:30"
+    },
+    {
+      "id": "easy-4",
+      "sender": "facilities@company.example",
+      "subject": "Water shutdown in Building B next Wednesday",
+      "body": "Sharing the notice for awareness only. No action needed unless you supervise contractors.",
+      "timestamp": "2026-04-02T10:12:00+05:30"
+    },
+    {
+      "id": "easy-5",
+      "sender": "legal@bigclient.example",
+      "subject": "Contract redlines for Friday signature",
+      "body": "We added two redlines to the MSA. Can you review them before Friday so procurement can sign?",
+      "timestamp": "2026-04-02T10:40:00+05:30"
+    }
+  ],
+  "expected_outcomes": [
+    {
+      "email_id": "easy-1",
+      "priority": "urgent",
+      "final_action": "classify"
+    },
+    {
+      "email_id": "easy-2",
+      "priority": "spam",
+      "final_action": "classify"
+    },
+    {
+      "email_id": "easy-3",
+      "priority": "important",
+      "final_action": "classify"
+    },
+    {
+      "email_id": "easy-4",
+      "priority": "low",
+      "final_action": "classify"
+    },
+    {
+      "email_id": "easy-5",
+      "priority": "important",
+      "final_action": "classify"
+    }
+  ]
+}

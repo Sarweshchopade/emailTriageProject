@@ -1,0 +1,157 @@
+{
+  "name": "hard",
+  "description": "Work a mixed inbox with competing priorities, delegations, scheduling, and low-value messages. Urgent work should be handled ahead of low-priority items.",
+  "max_steps": 20,
+  "grader": "hard",
+  "initial_emails": [
+    {
+      "id": "hard-1",
+      "sender": "ceo@company.example",
+      "subject": "Need board prep numbers before 2 PM today",
+      "body": "Please send a short update on the revised board metrics before 2 PM today.",
+      "timestamp": "2026-04-02T08:10:00+05:30"
+    },
+    {
+      "id": "hard-2",
+      "sender": "security-review@bigprospect.example",
+      "subject": "Security questionnaire for enterprise pilot",
+      "body": "Can your team complete the attached security questionnaire for our procurement review this week?",
+      "timestamp": "2026-04-02T08:25:00+05:30"
+    },
+    {
+      "id": "hard-3",
+      "sender": "csm@client.example",
+      "subject": "Reschedule customer kickoff to Thursday?",
+      "body": "The customer prefers Thursday at 3:00 PM IST for kickoff. Please confirm and move the invite if that works.",
+      "timestamp": "2026-04-02T08:40:00+05:30"
+    },
+    {
+      "id": "hard-4",
+      "sender": "promo@conference.example",
+      "subject": "Limited-time AI conference pass",
+      "body": "Sponsored offer. Register now and unsubscribe at any time.",
+      "timestamp": "2026-04-02T08:55:00+05:30"
+    },
+    {
+      "id": "hard-5",
+      "sender": "social@company.example",
+      "subject": "Photos from last week's offsite",
+      "body": "Sharing the team gallery for anyone who wants it.",
+      "timestamp": "2026-04-02T09:05:00+05:30"
+    },
+    {
+      "id": "hard-6",
+      "sender": "pager@monitoring.example",
+      "subject": "URGENT: Payment API error spike",
+      "body": "Error rate is up 18 percent in the payment API. Please investigate and post an update today.",
+      "timestamp": "2026-04-02T09:12:00+05:30"
+    },
+    {
+      "id": "hard-7",
+      "sender": "expenses@company.example",
+      "subject": "Need reimbursement approval for March travel",
+      "body": "Could you verify the billing details and confirm whether finance should update the reimbursement record?",
+      "timestamp": "2026-04-02T09:18:00+05:30"
+    },
+    {
+      "id": "hard-8",
+      "sender": "newsletter@industry.example",
+      "subject": "Weekly roundup: SaaS trends",
+      "body": "Here is the weekly newsletter with market trends and blog links.",
+      "timestamp": "2026-04-02T09:25:00+05:30"
+    },
+    {
+      "id": "hard-9",
+      "sender": "hiring@company.example",
+      "subject": "Interview feedback needed by EOD",
+      "body": "Please send your interview feedback today so we can close the loop with the candidate.",
+      "timestamp": "2026-04-02T09:34:00+05:30"
+    },
+    {
+      "id": "hard-10",
+      "sender": "docs@partner.example",
+      "subject": "Review API addendum next week",
+      "body": "No rush on this one. Please review the API addendum next week when you have a window.",
+      "timestamp": "2026-04-02T09:47:00+05:30"
+    }
+  ],
+  "expected_outcomes": [
+    {
+      "email_id": "hard-1",
+      "priority": "urgent",
+      "final_action": "respond",
+      "response_keywords": [
+        "today",
+        "2 PM"
+      ]
+    },
+    {
+      "email_id": "hard-2",
+      "priority": "important",
+      "final_action": "delegate",
+      "delegate_to": "security@openenv.example",
+      "response_keywords": [
+        "security"
+      ]
+    },
+    {
+      "email_id": "hard-3",
+      "priority": "important",
+      "final_action": "schedule",
+      "schedule_slot_contains": "Thursday 3:00 PM",
+      "response_keywords": [
+        "Thursday",
+        "3:00"
+      ]
+    },
+    {
+      "email_id": "hard-4",
+      "priority": "spam",
+      "final_action": "delete"
+    },
+    {
+      "email_id": "hard-5",
+      "priority": "low",
+      "final_action": "archive"
+    },
+    {
+      "email_id": "hard-6",
+      "priority": "urgent",
+      "final_action": "respond",
+      "response_keywords": [
+        "investigating",
+        "update",
+        "today"
+      ]
+    },
+    {
+      "email_id": "hard-7",
+      "priority": "important",
+      "final_action": "delegate",
+      "delegate_to": "finance@openenv.example",
+      "response_keywords": [
+        "finance"
+      ]
+    },
+    {
+      "email_id": "hard-8",
+      "priority": "low",
+      "final_action": "archive"
+    },
+    {
+      "email_id": "hard-9",
+      "priority": "urgent",
+      "final_action": "respond",
+      "response_keywords": [
+        "feedback",
+        "today"
+      ]
+    },
+    {
+      "email_id": "hard-10",
+      "priority": "low",
+      "final_action": "snooze",
+      "snooze_until_contains": "2026-04-05"
+    }
+  ]
+}

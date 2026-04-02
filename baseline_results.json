@@ -1,0 +1,463 @@
+{
+  "easy": {
+    "task": "easy",
+    "score": 1.0,
+    "reward_delta": 0.25,
+    "steps": 5,
+    "completed": true,
+    "actions": [
+      {
+        "action_type": "classify",
+        "email_id": "easy-1",
+        "response_text": null,
+        "priority": "urgent",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "classify",
+        "email_id": "easy-5",
+        "response_text": null,
+        "priority": "important",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "classify",
+        "email_id": "easy-3",
+        "response_text": null,
+        "priority": "important",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "classify",
+        "email_id": "easy-4",
+        "response_text": null,
+        "priority": "low",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "classify",
+        "email_id": "easy-2",
+        "response_text": null,
+        "priority": "spam",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      }
+    ],
+    "final_state": {
+      "task": "easy",
+      "description": "Classify each incoming message by priority. Use one classify action per email and set priority to urgent, important, low, or spam.",
+      "steps_taken": 5,
+      "max_steps": 10,
+      "completed": true,
+      "current_score": 1.0,
+      "current_emails": [
+        {
+          "id": "easy-1",
+          "sender": "maya.chen@company.example",
+          "subject": "Need board meeting revenue figures by 4 PM today",
+          "body": "Hi, can you send the updated revenue table before the board prep at 4 PM? This is time-sensitive.",
+          "timestamp": "2026-04-02T09:15:00+05:30",
+          "thread_id": null
+        },
+        {
+          "id": "easy-2",
+          "sender": "events@vendorpromos.example",
+          "subject": "Exclusive webinar + limited-time productivity bundle",
+          "body": "Register now for our sponsored offer and unsubscribe any time.",
+          "timestamp": "2026-04-02T09:22:00+05:30",
+          "thread_id": null
+        },
+        {
+          "id": "easy-3",
+          "sender": "design-team@company.example",
+          "subject": "Please review the homepage mockups before tomorrow's design review",
+          "body": "Could you leave comments on the pre-read before tomorrow morning's session?",
+          "timestamp": "2026-04-02T10:05:00+05:30",
+          "thread_id": null
+        },
+        {
+          "id": "easy-4",
+          "sender": "facilities@company.example",
+          "subject": "Water shutdown in Building B next Wednesday",
+          "body": "Sharing the notice for awareness only. No action needed unless you supervise contractors.",
+          "timestamp": "2026-04-02T10:12:00+05:30",
+          "thread_id": null
+        },
+        {
+          "id": "easy-5",
+          "sender": "legal@bigclient.example",
+          "subject": "Contract redlines for Friday signature",
+          "body": "We added two redlines to the MSA. Can you review them before Friday so procurement can sign?",
+          "timestamp": "2026-04-02T10:40:00+05:30",
+          "thread_id": null
+        }
+      ],
+      "action_history": [
+        {
+          "action_type": "classify",
+          "email_id": "easy-1",
+          "response_text": null,
+          "priority": "urgent",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "classify",
+          "email_id": "easy-5",
+          "response_text": null,
+          "priority": "important",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "classify",
+          "email_id": "easy-3",
+          "response_text": null,
+          "priority": "important",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "classify",
+          "email_id": "easy-4",
+          "response_text": null,
+          "priority": "low",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "classify",
+          "email_id": "easy-2",
+          "response_text": null,
+          "priority": "spam",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        }
+      ]
+    }
+  },
+  "medium": {
+    "task": "medium",
+    "score": 1.0,
+    "reward_delta": 0.3833,
+    "steps": 3,
+    "completed": true,
+    "actions": [
+      {
+        "action_type": "respond",
+        "email_id": "medium-1",
+        "response_text": "Thanks for flagging this. We are investigating the issue today and I will send an update by 4 PM.",
+        "priority": "urgent",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "schedule",
+        "email_id": "medium-3",
+        "response_text": "Thursday 3:00 PM IST works on my side. I will send the updated calendar invite.",
+        "priority": "important",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": "Thursday 3:00 PM IST",
+        "rationale": null
+      },
+      {
+        "action_type": "delegate",
+        "email_id": "medium-2",
+        "response_text": "I am looping in finance@openenv.example to review the billing details and will share an update today.",
+        "priority": "important",
+        "delegate_to": "finance@openenv.example",
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      }
+    ],
+    "final_state": {
+      "task": "medium",
+      "description": "Process three active email threads. For each one, choose the right triage action and include a practical draft when the action needs communication.",
+      "steps_taken": 3,
+      "max_steps": 12,
+      "completed": true,
+      "current_score": 1.0,
+      "current_emails": [],
+      "action_history": [
+        {
+          "action_type": "respond",
+          "email_id": "medium-1",
+          "response_text": "Thanks for flagging this. We are investigating the issue today and I will send an update by 4 PM.",
+          "priority": "urgent",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "schedule",
+          "email_id": "medium-3",
+          "response_text": "Thursday 3:00 PM IST works on my side. I will send the updated calendar invite.",
+          "priority": "important",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": "Thursday 3:00 PM IST",
+          "rationale": null
+        },
+        {
+          "action_type": "delegate",
+          "email_id": "medium-2",
+          "response_text": "I am looping in finance@openenv.example to review the billing details and will share an update today.",
+          "priority": "important",
+          "delegate_to": "finance@openenv.example",
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        }
+      ]
+    }
+  },
+  "hard": {
+    "task": "hard",
+    "score": 1.0,
+    "reward_delta": 0.13,
+    "steps": 10,
+    "completed": true,
+    "actions": [
+      {
+        "action_type": "respond",
+        "email_id": "hard-9",
+        "response_text": "I will send my feedback today so the hiring team has it before EOD.",
+        "priority": "urgent",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "respond",
+        "email_id": "hard-6",
+        "response_text": "We are investigating the incident now and I will share an update today as we narrow the root cause.",
+        "priority": "urgent",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "respond",
+        "email_id": "hard-1",
+        "response_text": "I am on it and will send an update today before 2 PM.",
+        "priority": "urgent",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "delegate",
+        "email_id": "hard-7",
+        "response_text": "I am looping in finance@openenv.example to review the billing details and will share an update today.",
+        "priority": "important",
+        "delegate_to": "finance@openenv.example",
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "schedule",
+        "email_id": "hard-3",
+        "response_text": "Thursday 3:00 PM IST works on my side. I will send the updated calendar invite.",
+        "priority": "important",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": "Thursday 3:00 PM IST",
+        "rationale": null
+      },
+      {
+        "action_type": "delegate",
+        "email_id": "hard-2",
+        "response_text": "I am looping in security@openenv.example today and will follow up once they confirm the questionnaire details.",
+        "priority": "important",
+        "delegate_to": "security@openenv.example",
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "snooze",
+        "email_id": "hard-10",
+        "response_text": "I have parked this for next week and will revisit it on 2026-04-05.",
+        "priority": "low",
+        "delegate_to": null,
+        "snooze_until": "2026-04-05T09:00:00+05:30",
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "archive",
+        "email_id": "hard-8",
+        "response_text": null,
+        "priority": "low",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "archive",
+        "email_id": "hard-5",
+        "response_text": null,
+        "priority": "low",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      },
+      {
+        "action_type": "delete",
+        "email_id": "hard-4",
+        "response_text": null,
+        "priority": "spam",
+        "delegate_to": null,
+        "snooze_until": null,
+        "scheduled_time": null,
+        "rationale": null
+      }
+    ],
+    "final_state": {
+      "task": "hard",
+      "description": "Work a mixed inbox with competing priorities, delegations, scheduling, and low-value messages. Urgent work should be handled ahead of low-priority items.",
+      "steps_taken": 10,
+      "max_steps": 20,
+      "completed": true,
+      "current_score": 1.0,
+      "current_emails": [],
+      "action_history": [
+        {
+          "action_type": "respond",
+          "email_id": "hard-9",
+          "response_text": "I will send my feedback today so the hiring team has it before EOD.",
+          "priority": "urgent",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "respond",
+          "email_id": "hard-6",
+          "response_text": "We are investigating the incident now and I will share an update today as we narrow the root cause.",
+          "priority": "urgent",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "respond",
+          "email_id": "hard-1",
+          "response_text": "I am on it and will send an update today before 2 PM.",
+          "priority": "urgent",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "delegate",
+          "email_id": "hard-7",
+          "response_text": "I am looping in finance@openenv.example to review the billing details and will share an update today.",
+          "priority": "important",
+          "delegate_to": "finance@openenv.example",
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "schedule",
+          "email_id": "hard-3",
+          "response_text": "Thursday 3:00 PM IST works on my side. I will send the updated calendar invite.",
+          "priority": "important",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": "Thursday 3:00 PM IST",
+          "rationale": null
+        },
+        {
+          "action_type": "delegate",
+          "email_id": "hard-2",
+          "response_text": "I am looping in security@openenv.example today and will follow up once they confirm the questionnaire details.",
+          "priority": "important",
+          "delegate_to": "security@openenv.example",
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "snooze",
+          "email_id": "hard-10",
+          "response_text": "I have parked this for next week and will revisit it on 2026-04-05.",
+          "priority": "low",
+          "delegate_to": null,
+          "snooze_until": "2026-04-05T09:00:00+05:30",
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "archive",
+          "email_id": "hard-8",
+          "response_text": null,
+          "priority": "low",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "archive",
+          "email_id": "hard-5",
+          "response_text": null,
+          "priority": "low",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        },
+        {
+          "action_type": "delete",
+          "email_id": "hard-4",
+          "response_text": null,
+          "priority": "spam",
+          "delegate_to": null,
+          "snooze_until": null,
+          "scheduled_time": null,
+          "rationale": null
+        }
+      ]
+    }
+  }
+}

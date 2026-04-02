@@ -1,0 +1,41 @@
+spec_version: 1
+name: email-triage-assistant
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+version: 1.0.0
+description: Deterministic email inbox management environment for agent evaluation
+author: Codex
+tags:
+  - email
+  - productivity
+  - triage
+  - agents
+
+environment:
+  class: environment.email_env.EmailTriageEnv
+  tasks:
+    - name: easy
+      description: Classify five emails into priority buckets.
+      max_steps: 10
+    - name: medium
+      description: Process three threads with responses, delegation, and scheduling.
+      max_steps: 12
+    - name: hard
+      description: Handle a mixed inbox with conflicting priorities and workflow actions.
+      max_steps: 20
+
+action_model: environment.models.EmailAction
+observation_model: environment.models.Observation
+reward_model: environment.models.Reward
+
+graders:
+  easy: environment.graders.EasyGrader
+  medium: environment.graders.MediumGrader
+  hard: environment.graders.HardTaskGrader
+
+metrics:
+  - final_score
+  - completion_rate
+  - steps_taken

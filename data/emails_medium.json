@@ -1,0 +1,63 @@
+{
+  "name": "medium",
+  "description": "Process three active email threads. For each one, choose the right triage action and include a practical draft when the action needs communication.",
+  "max_steps": 12,
+  "grader": "medium",
+  "initial_emails": [
+    {
+      "id": "medium-1",
+      "sender": "olivia@acme.example",
+      "subject": "Launch blocker: export is failing for today's pilot",
+      "body": "Our team cannot export the dataset for the customer pilot. Can you confirm whether this will be fixed today and share an update by 4 PM?",
+      "timestamp": "2026-04-02T08:45:00+05:30",
+      "thread_id": "thread-acme-export"
+    },
+    {
+      "id": "medium-2",
+      "sender": "ap@vendor.example",
+      "subject": "Invoice discrepancy on March implementation work",
+      "body": "The March invoice does not match the statement of work. Could you verify the billing line items and confirm who owns the correction?",
+      "timestamp": "2026-04-02T09:05:00+05:30",
+      "thread_id": "thread-vendor-invoice"
+    },
+    {
+      "id": "medium-3",
+      "sender": "rachel@clientsuccess.example",
+      "subject": "Can we reschedule the onboarding session?",
+      "body": "The customer asked whether Thursday at 3:00 PM IST works for the onboarding session. Please confirm availability and update the calendar.",
+      "timestamp": "2026-04-02T09:30:00+05:30",
+      "thread_id": "thread-onboarding-reschedule"
+    }
+  ],
+  "expected_outcomes": [
+    {
+      "email_id": "medium-1",
+      "priority": "urgent",
+      "final_action": "respond",
+      "response_keywords": [
+        "today",
+        "update",
+        "4 PM"
+      ]
+    },
+    {
+      "email_id": "medium-2",
+      "priority": "important",
+      "final_action": "delegate",
+      "delegate_to": "finance@openenv.example",
+      "response_keywords": [
+        "finance"
+      ]
+    },
+    {
+      "email_id": "medium-3",
+      "priority": "important",
+      "final_action": "schedule",
+      "schedule_slot_contains": "Thursday 3:00 PM",
+      "response_keywords": [
+        "Thursday",
+        "3:00"
+      ]
+    }
+  ]
+}
