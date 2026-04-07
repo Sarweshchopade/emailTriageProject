@@ -1,7 +1,7 @@
 ---
 title: OpenEnv Email Triage Assistant
 emoji: "📬"
-colorFrom: blue
+colorFrom: green
 colorTo: blue
 sdk: docker
 app_port: 7860
