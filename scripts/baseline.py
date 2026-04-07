@@ -168,7 +168,7 @@ class OpenAIAgent:
             ),
             input=self._build_prompt(observation),
             text_format=EmailAction,
-            temperature=0.1,
+            temperature=0.0,
             max_output_tokens=300,
         )
         return parsed.output_parsed

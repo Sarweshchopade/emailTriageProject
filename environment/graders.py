@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Iterable, List
+from typing import Iterable, List
 
 from .models import Email, EmailAction, EmailPriority
 from .tasks import ExpectedOutcome
@@ -142,15 +142,47 @@ class MediumGrader(EmailGrader):
 class HardTaskGrader(EmailGrader):
     def score_partial(self, emails: List[Email], actions: List[EmailAction]) -> float:
         base = super().score_partial(emails, actions)
-        urgency_order = self._urgency_ordering_score(actions)
+        urgency_order = self._urgency_sequence_score(actions)
+        urgent_before_low = self._urgent_before_low_score(actions)
         delegation = self._delegation_score(actions)
-        return round(min(1.0, (0.8 * base) + (0.1 * urgency_order) + (0.1 * delegation)), 4)
+        return round(
+            min(1.0, (0.6 * base) + (0.2 * urgency_order) + (0.1 * urgent_before_low) + (0.1 * delegation)),
+            4,
+        )
 
     def final_score(self, actions: List[EmailAction]) -> float:
         return self.score_partial([], actions)
 
-    def _urgency_ordering_score(self, actions: List[EmailAction]) -> float:
-        action_order: Dict[str, int] = {}
+    def _urgency_sequence_score(self, actions: List[EmailAction]) -> float:
+        urgent_ids = [
+            expectation.email_id
+            for expectation in self.expected
+            if expectation.priority == EmailPriority.URGENT
+        ]
+        if not urgent_ids:
+            return 1.0
+
+        handled_urgent_ids: list[str] = []
+        seen: set[str] = set()
+        urgent_lookup = set(urgent_ids)
+
+        for action in actions:
+            if action.email_id in urgent_lookup and action.email_id not in seen:
+                handled_urgent_ids.append(action.email_id)
+                seen.add(action.email_id)
+
+        if not handled_urgent_ids:
+            return 0.0
+
+        correctly_sequenced = sum(
+            1
+            for index, email_id in enumerate(handled_urgent_ids)
+            if index < len(urgent_ids) and email_id == urgent_ids[index]
+        )
+        return correctly_sequenced / len(urgent_ids)
+
+    def _urgent_before_low_score(self, actions: List[EmailAction]) -> float:
+        action_order = {}
         for index, action in enumerate(actions):
             action_order.setdefault(action.email_id, index)
 
@@ -164,9 +196,6 @@ class HardTaskGrader(EmailGrader):
             for expectation in self.expected
             if expectation.priority == EmailPriority.LOW
         ]
-
-        if not urgent_ids:
-            return 1.0
 
         urgent_positions = [action_order[email_id] for email_id in urgent_ids if email_id in action_order]
         if not urgent_positions:

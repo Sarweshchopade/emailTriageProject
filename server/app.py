@@ -5,6 +5,7 @@ Usage:
     python -m server.app
 """
 
+import os
 from pathlib import Path
 
 try:
@@ -24,7 +25,7 @@ app = create_app(
     EmailTriageAction,
     EmailTriageObservation,
     env_name="email-triage-assistant",
-    max_concurrent_envs=4,
+    max_concurrent_envs=int(os.getenv("MAX_CONCURRENT_ENVS", "32")),
 )
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -32,10 +33,11 @@ app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
 app.include_router(ui_router)
 
 
-def main(host: str = "0.0.0.0", port: int = 8000):
+def main(host: str = "0.0.0.0", port: int | None = None):
     import uvicorn
 
-    uvicorn.run(app, host=host, port=port)
+    resolved_port = port if port is not None else int(os.getenv("PORT", "7860"))
+    uvicorn.run(app, host=host, port=resolved_port)
 
 
 if __name__ == "__main__":

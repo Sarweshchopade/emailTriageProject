@@ -242,8 +242,8 @@
   },
   "hard": {
     "task": "hard",
-    "score": 1.0,
-    "reward_delta": 0.13,
+    "score": 0.8667,
+    "reward_delta": 0.11,
     "steps": 10,
     "completed": true,
     "actions": [
@@ -354,7 +354,7 @@
       "steps_taken": 10,
       "max_steps": 20,
       "completed": true,
-      "current_score": 1.0,
+      "current_score": 0.8667,
       "current_emails": [],
       "action_history": [
         {
