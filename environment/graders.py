@@ -7,6 +7,12 @@ from .tasks import ExpectedOutcome
 
 
 class EmailGrader:
+    def normalize_score(score: float) -> float:
+     if score <= 0:
+        return 0.01
+     if score >= 1:
+        return 0.99
+     return score
     def __init__(self, expected_actions: Iterable[ExpectedOutcome]):
         self.expected = list(expected_actions)
 
@@ -58,17 +64,17 @@ class EmailGrader:
     def _score_expectation(self, expectation: ExpectedOutcome, actions: List[EmailAction]) -> float:
         email_actions = self._actions_for_email(actions, expectation.email_id)
         if not email_actions:
-            return 0.0
+            return 0.01
 
         checks: List[tuple[float, float]] = []
 
         if expectation.priority is not None:
             matched_priority = any(action.priority == expectation.priority for action in email_actions)
-            checks.append((0.25, 1.0 if matched_priority else 0.0))
+            checks.append((0.25, 0.9 if matched_priority else 0.1))
 
         if expectation.final_action is not None:
             matched_action = any(action.action_type == expectation.final_action for action in email_actions)
-            checks.append((0.35, 1.0 if matched_action else 0.0))
+            checks.append((0.35, 0.9 if matched_action else 0.1))
 
         if expectation.delegate_to:
             needle = expectation.delegate_to.casefold()
@@ -76,7 +82,7 @@ class EmailGrader:
                 action.delegate_to and action.delegate_to.casefold() == needle
                 for action in email_actions
             )
-            checks.append((0.15, 1.0 if matched_delegate else 0.0))
+            checks.append((0.15, 0.9 if matched_delegate else 0.1))
 
         if expectation.schedule_slot_contains:
             needle = expectation.schedule_slot_contains.casefold()
@@ -84,7 +90,7 @@ class EmailGrader:
                 action.scheduled_time and needle in action.scheduled_time.casefold()
                 for action in email_actions
             )
-            checks.append((0.15, 1.0 if matched_schedule else 0.0))
+            checks.append((0.15, 0.9 if matched_schedule else 0.1))
 
         if expectation.snooze_until_contains:
             needle = expectation.snooze_until_contains.casefold()
@@ -92,7 +98,7 @@ class EmailGrader:
                 action.snooze_until and needle in action.snooze_until.casefold()
                 for action in email_actions
             )
-            checks.append((0.15, 1.0 if matched_snooze else 0.0))
+            checks.append((0.15, 0.9 if matched_snooze else 0.1))
 
         if expectation.response_keywords:
             response_score = max(
@@ -108,7 +114,7 @@ class EmailGrader:
             return 1.0
 
         total_weight = sum(weight for weight, _ in checks)
-        return sum(weight * score for weight, score in checks) / total_weight
+        return self.normalize_score(sum(weight * score for weight, score in checks) / total_weight)
 
     @staticmethod
     def _actions_for_email(actions: List[EmailAction], email_id: str) -> List[EmailAction]:
@@ -128,10 +134,10 @@ class EasyGrader(EmailGrader):
     def _score_expectation(self, expectation: ExpectedOutcome, actions: List[EmailAction]) -> float:
         if expectation.final_action == "classify" and expectation.priority is not None:
             email_actions = self._actions_for_email(actions, expectation.email_id)
-            return 1.0 if any(
+            return 0.9 if any(
                 action.action_type == "classify" and action.priority == expectation.priority
                 for action in email_actions
-            ) else 0.0
+            ) else 0.1
         return super()._score_expectation(expectation, actions)
 
 
@@ -146,8 +152,8 @@ class HardTaskGrader(EmailGrader):
         urgent_before_low = self._urgent_before_low_score(actions)
         delegation = self._delegation_score(actions)
         return round(
-            min(1.0, (0.6 * base) + (0.2 * urgency_order) + (0.1 * urgent_before_low) + (0.1 * delegation)),
-            4,
+            self.normalize_score((0.6 * base) + (0.2 * urgency_order) + (0.1 * urgent_before_low) + (0.1 * delegation))
+
         )
 
     def final_score(self, actions: List[EmailAction]) -> float:
