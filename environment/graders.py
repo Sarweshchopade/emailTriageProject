@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from ast import Dict
 from typing import Iterable, List
 
 from .models import Email, EmailAction, EmailPriority
@@ -7,6 +8,7 @@ from .tasks import ExpectedOutcome
 
 
 class EmailGrader:
+    @staticmethod
     def normalize_score(score: float) -> float:
      if score <= 0:
         return 0.01
@@ -18,14 +20,14 @@ class EmailGrader:
 
     def score_partial(self, emails: List[Email], actions: List[EmailAction]) -> float:
         if not self.expected:
-            return 1.0
+            return 0.99
 
         total_weight = sum(expectation.weight for expectation in self.expected)
         achieved = sum(
             self._score_expectation(expectation, actions) * expectation.weight
             for expectation in self.expected
         )
-        return round(achieved / total_weight, 4)
+        return round(self.normalize_score(achieved / total_weight), 4)
 
     def final_score(self, actions: List[EmailAction]) -> float:
         return self.score_partial([], actions)
@@ -111,7 +113,7 @@ class EmailGrader:
             checks.append((0.25, response_score))
 
         if not checks:
-            return 1.0
+            return 0.99
 
         total_weight = sum(weight for weight, _ in checks)
         return self.normalize_score(sum(weight * score for weight, score in checks) / total_weight)
@@ -123,7 +125,7 @@ class EmailGrader:
     @staticmethod
     def _keyword_coverage(text: str, keywords: List[str]) -> float:
         if not keywords:
-            return 1.0
+            return 0.99
 
         haystack = text.casefold()
         matched = sum(1 for keyword in keywords if keyword.casefold() in haystack)
@@ -166,7 +168,7 @@ class HardTaskGrader(EmailGrader):
             if expectation.priority == EmailPriority.URGENT
         ]
         if not urgent_ids:
-            return 1.0
+            return 0.99
 
         handled_urgent_ids: list[str] = []
         seen: set[str] = set()
@@ -178,14 +180,14 @@ class HardTaskGrader(EmailGrader):
                 seen.add(action.email_id)
 
         if not handled_urgent_ids:
-            return 0.0
+            return 0.1
 
         correctly_sequenced = sum(
             1
             for index, email_id in enumerate(handled_urgent_ids)
             if index < len(urgent_ids) and email_id == urgent_ids[index]
         )
-        return correctly_sequenced / len(urgent_ids)
+        return self.normalize_score(correctly_sequenced / len(urgent_ids))
 
     def _urgent_before_low_score(self, actions: List[EmailAction]) -> float:
         action_order = {}
@@ -205,22 +207,22 @@ class HardTaskGrader(EmailGrader):
 
         urgent_positions = [action_order[email_id] for email_id in urgent_ids if email_id in action_order]
         if not urgent_positions:
-            return 0.0
+            return 0.1
 
         low_positions = [action_order[email_id] for email_id in low_ids if email_id in action_order]
         if not low_positions:
-            return len(urgent_positions) / len(urgent_ids)
+            return self.normalize_score(len(urgent_positions) / len(urgent_ids))
 
         earliest_low = min(low_positions)
         handled_before_low = sum(1 for position in urgent_positions if position < earliest_low)
-        return handled_before_low / len(urgent_ids)
+        return self.normalize_score(handled_before_low / len(urgent_ids))
 
     def _delegation_score(self, actions: List[EmailAction]) -> float:
         delegation_expectations = [
             expectation for expectation in self.expected if expectation.final_action == "delegate"
         ]
         if not delegation_expectations:
-            return 1.0
+            return 0.99
 
         matched = sum(
             1
