@@ -5,7 +5,13 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Optional
+
+try:
+    from openai import OpenAI
+except Exception:  # pragma: no cover
+    OpenAI = None  # type: ignore[assignment]
+
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -22,6 +28,8 @@ BENCHMARK = "email-triage-assistant"
 TEMPERATURE = 0.0
 MAX_COMPLETION_TOKENS = 350
 SUCCESS_SCORE_THRESHOLD = 0.1
+STRICT_MIN_SCORE = 0.001
+STRICT_MAX_SCORE = 0.999
 
 
 def log_start(task: str, env: str, model: str) -> None:
@@ -65,9 +73,15 @@ def _extract_json_object(text: str) -> dict[str, Any]:
 class SubmissionAgent:
     def __init__(self) -> None:
         self.fallback = HeuristicAgent()
-        self.client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN) if HF_TOKEN else None
+        self.client = None
         self.source = "heuristic"
         self.last_error = ""
+
+        if HF_TOKEN and OpenAI is not None:
+            try:
+                self.client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+            except Exception as exc:  # pragma: no cover
+                self.last_error = str(exc)
 
     @property
     def provider_name(self) -> str:
@@ -98,18 +112,15 @@ class SubmissionAgent:
                 ],
             )
             content = completion.choices[0].message.content or "{}"
-            try:
-                action_dict = _extract_json_object(content)
-                action = EmailAction.model_validate(action_dict)
-            except Exception:
-             return self.fallback.act(observation)
+            action_dict = _extract_json_object(content)
+            action = EmailAction.model_validate(action_dict)
             self.source = "openai"
             self.last_error = ""
             return action
         except Exception as exc:  # pragma: no cover
             self.source = "heuristic"
             self.last_error = str(exc)
-        return self.fallback.act(observation)
+            return self.fallback.act(observation)
 
     @staticmethod
     def _build_prompt(observation: Observation) -> str:
@@ -138,29 +149,34 @@ def _format_action(action: EmailAction) -> str:
     return ";".join(parts)
 
 
+def _strict_score(value: float) -> float:
+    if value <= 0.0:
+        return STRICT_MIN_SCORE
+    if value >= 1.0:
+        return STRICT_MAX_SCORE
+    return round(value, 4)
+
+
 def run_task(task_name: str, agent: SubmissionAgent) -> dict[str, Any]:
-    env = EmailTriageEnv(task_name=task_name)
-    observation = env.reset()
     started_at = time.time()
     rewards: list[float] = []
     steps_taken = 0
-    final_score = 0.0
+    final_score = STRICT_MIN_SCORE
     success = False
+    completed = False
+    error_message: Optional[str] = None
 
     log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
 
-    done = False
     try:
+        env = EmailTriageEnv(task_name=task_name)
+        observation = env.reset()
+        done = False
+
         while not done and observation.remaining_actions > 0:
             action = agent.act(observation)
             observation, reward, done, info = env.step(action)
-            raw_reward = float(getattr(reward, "delta", 0.01))
-            if raw_reward <= 0:
-             step_reward = 0.01
-            elif raw_reward >= 1:
-             step_reward = 0.99
-            else:
-             step_reward = raw_reward
+            step_reward = float(reward.delta)
             rewards.append(step_reward)
             steps_taken = env.steps_taken
             error = info.get("error") if isinstance(info, dict) else None
@@ -172,49 +188,41 @@ def run_task(task_name: str, agent: SubmissionAgent) -> dict[str, Any]:
                 error=error,
             )
 
-        raw_score = float(env.grader.final_score(env.action_history))
-
-        if raw_score <= 0:
-            final_score = 0.01
-        elif raw_score >= 1:
-            final_score = 0.99
-        else:
-            final_score = raw_score
+        final_score = _strict_score(float(env.grader.final_score(env.action_history)))
+        completed = done
         success = final_score >= SUCCESS_SCORE_THRESHOLD
         duration_s = round(time.time() - started_at, 3)
         return {
             "task": task_name,
             "score": round(final_score, 4),
             "steps": steps_taken,
-            "completed": done,
+            "completed": completed,
             "duration_s": duration_s,
             "provider": agent.provider_name,
         }
+    except Exception as exc:  # pragma: no cover
+        error_message = str(exc)
+        success = False
+        duration_s = round(time.time() - started_at, 3)
+        return {
+            "task": task_name,
+            "score": round(final_score, 4),
+            "steps": steps_taken,
+            "completed": completed,
+            "duration_s": duration_s,
+            "provider": agent.provider_name,
+            "error": error_message,
+        }
     finally:
-        log_end(success=success, steps=steps_taken, score=final_score, rewards=rewards)
+        log_end(success=success, steps=steps_taken, score=_strict_score(final_score), rewards=rewards)
 
 
 def main() -> None:
     agent = SubmissionAgent()
-    results = []
-
-    for task_name in TASKS:
-        try:
-            result = run_task(task_name, agent)
-            results.append(result)
-        except Exception as e:
-            print(f"[ERROR] task={task_name} error={str(e)}", flush=True)
-            results.append({
-               "task": task_name,
-               "score": 0.01,
-               "steps": 0,
-               "completed": False,
-               "duration_s": 0,
-               "provider": agent.provider_name,
-        })
+    results = [run_task(task_name, agent) for task_name in TASKS]
     summary = {
         "tasks": results,
-        "average_score": round(sum(item["score"] for item in results) / len(results), 4),
+        "average_score": _strict_score(sum(item["score"] for item in results) / len(results)),
         "provider": agent.provider_name,
     }
     with open("inference_results.json", "w", encoding="utf-8") as handle:
