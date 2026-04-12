@@ -5,10 +5,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any, Optional
-
-from openai import OpenAI
-
+from typing import Any, Optional, Dict
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -101,15 +98,18 @@ class SubmissionAgent:
                 ],
             )
             content = completion.choices[0].message.content or "{}"
-            action_dict = _extract_json_object(content)
-            action = EmailAction.model_validate(action_dict)
+            try:
+                action_dict = _extract_json_object(content)
+                action = EmailAction.model_validate(action_dict)
+            except Exception:
+             return self.fallback.act(observation)
             self.source = "openai"
             self.last_error = ""
             return action
         except Exception as exc:  # pragma: no cover
             self.source = "heuristic"
             self.last_error = str(exc)
-            return self.fallback.act(observation)
+        return self.fallback.act(observation)
 
     @staticmethod
     def _build_prompt(observation: Observation) -> str:
@@ -154,7 +154,13 @@ def run_task(task_name: str, agent: SubmissionAgent) -> dict[str, Any]:
         while not done and observation.remaining_actions > 0:
             action = agent.act(observation)
             observation, reward, done, info = env.step(action)
-            step_reward = float(reward.delta)
+            raw_reward = float(getattr(reward, "delta", 0.01))
+            if raw_reward <= 0:
+             step_reward = 0.01
+            elif raw_reward >= 1:
+             step_reward = 0.99
+            else:
+             step_reward = raw_reward
             rewards.append(step_reward)
             steps_taken = env.steps_taken
             error = info.get("error") if isinstance(info, dict) else None
@@ -166,7 +172,14 @@ def run_task(task_name: str, agent: SubmissionAgent) -> dict[str, Any]:
                 error=error,
             )
 
-        final_score = min(max(float(env.grader.final_score(env.action_history)), 0.0), 1.0)
+        raw_score = float(env.grader.final_score(env.action_history))
+
+        if raw_score <= 0:
+            final_score = 0.01
+        elif raw_score >= 1:
+            final_score = 0.99
+        else:
+            final_score = raw_score
         success = final_score >= SUCCESS_SCORE_THRESHOLD
         duration_s = round(time.time() - started_at, 3)
         return {
@@ -183,7 +196,22 @@ def run_task(task_name: str, agent: SubmissionAgent) -> dict[str, Any]:
 
 def main() -> None:
     agent = SubmissionAgent()
-    results = [run_task(task_name, agent) for task_name in TASKS]
+    results = []
+
+    for task_name in TASKS:
+        try:
+            result = run_task(task_name, agent)
+            results.append(result)
+        except Exception as e:
+            print(f"[ERROR] task={task_name} error={str(e)}", flush=True)
+            results.append({
+               "task": task_name,
+               "score": 0.01,
+               "steps": 0,
+               "completed": False,
+               "duration_s": 0,
+               "provider": agent.provider_name,
+        })
     summary = {
         "tasks": results,
         "average_score": round(sum(item["score"] for item in results) / len(results), 4),
