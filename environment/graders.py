@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ast import Dict
+from typing import Iterable, List, Dict
 from typing import Iterable, List
 
 from .models import Email, EmailAction, EmailPriority
@@ -8,13 +8,13 @@ from .tasks import ExpectedOutcome
 
 
 class EmailGrader:
-    @staticmethod
+    @staticmethod 
     def normalize_score(score: float) -> float:
-     if score <= 0:
-        return 0.01
-     if score >= 1:
-        return 0.99
-     return score
+        if score <= 0:
+            return 0.01
+        if score >= 1:
+            return 0.99
+        return score
     def __init__(self, expected_actions: Iterable[ExpectedOutcome]):
         self.expected = list(expected_actions)
 
@@ -229,7 +229,7 @@ class HardTaskGrader(EmailGrader):
             for expectation in delegation_expectations
             if self._score_expectation(expectation, actions) >= 0.9
         )
-        return matched / len(delegation_expectations)
+        return self.normalize_score(matched / len(delegation_expectations))
 
 
 def get_grader(task_name: str, expected_actions: Iterable[ExpectedOutcome]) -> EmailGrader:
